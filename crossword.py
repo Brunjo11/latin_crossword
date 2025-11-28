@@ -3,7 +3,12 @@ import json
 
 # Load words and clues
 with open('words.json', 'r') as f:
+    data = {}
+try:
     data = json.load(f)
+except Exception as e:
+    st.error("❌ Errore nel file words.json: formato non valido. Correggilo e ricarica l'app.")
+    data = {}
 
 # Safely load clues and words
 clues = data.get('clues', {})            # fallback to empty dict if missing
