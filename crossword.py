@@ -5,9 +5,10 @@ import json
 with open('words.json', 'r') as f:
     data = json.load(f)
 
-clues = data['clues']            # { "1-Orizzontale": "definizione" ... }
-solutions_words = data['words']   # { "1-Orizzontale": "CARPEDIEM", ... }
-solution = data['solution']       # { "0,0": "C", ... }
+# Safely load clues and words
+clues = data.get('clues', {})            # fallback to empty dict if missing
+solutions_words = data.get('words', {})   # fallback to empty dict   # { "1-Orizzontale": "CARPEDIEM", ... }
+solution = data.get('solution', {})       # fallback to empty dict       # { "0,0": "C", ... }
 
 # Initialize session state
 if 'user_words' not in st.session_state:
