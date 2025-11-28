@@ -1,23 +1,14 @@
 {
   "words": [
-    { "word": "CARPEDIEM", "clue": "Cogli l'attimo, vivi il presente" },
-    { "word": "VENIVIDIVICI", "clue": "Frase associata a un successo rapido e totale" },
-    { "word": "ADHOC", "clue": "Creato appositamente per uno scopo specifico" },
-    { "word": "CURRICULUMVITAE", "clue": "Documento che descrive il percorso professionale" },
-    { "word": "DEFACTO", "clue": "Esiste nella pratica, anche se non ufficialmente" },
-    { "word": "ALTEREGO", "clue": "Un altro sé, una seconda personalità" },
-    { "word": "INEXTREMIS", "clue": "All'ultimo momento" },
-    { "word": "APRIORI", "clue": "Prima dell'esperienza, usato nella logica" },
-    { "word": "MEACULPA", "clue": "Ammissione di colpa" },
-    { "word": "MEMENTOMORI", "clue": "Ricorda che sei mortale" },
-    { "word": "DUMSPIROSPERO", "clue": "Finché respiro, spero" },
-    { "word": "BIS", "clue": "Due volte, ancora una volta" },
-    { "word": "AUTAUT", "clue": "O questo o quello" },
-    { "word": "ETCETERA", "clue": "E così via" },
-    { "word": "ADMAIORASEMPER", "clue": "Augurio per traguardi sempre maggiori" },
-    { "word": "POSTSCRIPTUM", "clue": "Nota aggiunta dopo" },
-    { "word": "MODUSOPERANDI", "clue": "Modo abituale di agire" },
-    { "word": "DOUTDES", "clue": "Do affinché tu dia" },
-    { "word": "COGITOERGOSUM", "clue": "Penso, dunque sono" }
+    { "word": "CARPEDIEM", "clue": "Cogli l'attimo, vivi il presente", "direction": "H", "row": 0, "col": 0 },
+    { "word": "VENIVIDIVICI", "clue": "Frase associata a un successo rapido e totale", "direction": "H", "row": 2, "col": 0 },
+    { "word": "ADHOC", "clue": "Creato appositamente per uno scopo specifico", "direction": "V", "row": 0, "col": 4 },
+    { "word": "CURRICULUMVITAE", "clue": "Documento che descrive il percorso professionale", "direction": "H", "row": 4, "col": 0 },
+    { "word": "DEFACTO", "clue": "Esiste nella pratica, anche se non ufficialmente", "direction": "V", "row": 3, "col": 7 },
+    { "word": "ALTEREGO", "clue": "Un altro sé, una seconda personalità", "direction": "H", "row": 6, "col": 0 },
+    { "word": "INEXTREMIS", "clue": "All'ultimo momento", "direction": "V", "row": 5, "col": 2 },
+    { "word": "APRIORI", "clue": "Prima dell'esperienza, usato nella logica", "direction": "H", "row": 8, "col": 0 },
+    { "word": "MEACULPA", "clue": "Ammissione di colpa", "direction": "V", "row": 7, "col": 5 },
+    { "word": "MEMENTOMORI", "clue": "Ricorda che sei mortale", "direction": "H", "row": 10, "col": 0 }
   ]
 }
