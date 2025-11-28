@@ -1,68 +1,55 @@
 import streamlit as st
-import random
 import json
-import numpy as np
 
-# Titolo
-st.title("Cruciverba Latino")
+# Load words and clues
+with open('words.json', 'r') as f:
+    data = json.load(f)
 
-# Carica parole e indizi
-@st.cache_data
-def load_words():
-    with open("words.json", "r") as f:
-        return json.load(f)
+clues = data['clues']
+solution = data['solution']  # A dictionary with keys as cell positions and values as letters
 
-words_data = load_words()
-words = [w["word"] for w in words_data]
-clues = [w["clue"] for w in words_data]
+# Initialize session state
+if 'grid' not in st.session_state:
+    st.session_state.grid = {cell: "" for cell in solution.keys()}
 
-# Dimensione griglia
-GRID_SIZE = 15
+st.title("🧩 Cruciverba Interattivo")
+st.write("Compila il cruciverba e premi **Controlla** per verificare le risposte. Usa **Reset** per ricominciare.")
 
-def can_place(grid, word, row, col, direction):
-    if direction == "H":
-        if col + len(word) > GRID_SIZE:
-            return False
-        for i, c in enumerate(word):
-            if grid[row, col+i] != " " and grid[row, col+i] != c:
-                return False
-    else:  # verticale
-        if row + len(word) > GRID_SIZE:
-            return False
-        for i, c in enumerate(word):
-            if grid[row+i, col] != " " and grid[row+i, col] != c:
-                return False
-    return True
+# Display clues
+st.header("📜 Definizioni")
+for key, text in clues.items():
+    st.write(f"**{key}** – {text}")
 
-def place_word(grid, word):
-    directions = ["H", "V"]
-    random.shuffle(directions)
-    for direction in directions:
-        for _ in range(100):
-            row = random.randint(0, GRID_SIZE-1)
-            col = random.randint(0, GRID_SIZE-1)
-            if can_place(grid, word, row, col, direction):
-                for i, c in enumerate(word):
-                    if direction == "H":
-                        grid[row, col+i] = c
-                    else:
-                        grid[row+i, col] = c
-                return True
-    return False
+# Crossword grid UI
+st.header("🧩 Griglia del Cruciverba")
+cols = sorted({int(pos.split(',')[1]) for pos in solution.keys()})
+rows = sorted({int(pos.split(',')[0]) for pos in solution.keys()})
 
-def generate_crossword():
-    grid = np.full((GRID_SIZE, GRID_SIZE), " ")
-    for word in words:
-        place_word(grid, word)
-    return grid
+grid_table = []
+for r in rows:
+    row_cells = []
+    for c in cols:
+        cell_key = f"{r},{c}"
+        if cell_key in solution:
+            row_cells.append(st.text_input("", st.session_state.grid[cell_key], key=cell_key, max_chars=1))
+        else:
+            row_cells.append(" ")
+    grid_table.append(row_cells)
 
-# Bottone per generare cruciverba
-if st.button("Genera Cruciverba"):
-    grid = generate_crossword()
-    # Mostra griglia
-    st.subheader("Griglia")
-    st.text("\n".join([" ".join(row) for row in grid]))
-    # Mostra indizi
-    st.subheader("Indizi")
-    for i, clue in enumerate(clues):
-        st.write(f"{i+1}. {clue}")
+# Check button
+if st.button("✔️ Controlla"):
+    correct = True
+    for cell, correct_letter in solution.items():
+        if st.session_state.grid[cell].upper() != correct_letter.upper():
+            correct = False
+    if correct:
+        st.success("🎉 Complimenti! Hai completato il cruciverba correttamente!")
+    else:
+        st.error("❌ Alcune risposte sono sbagliate. Riprova!")
+
+# Reset button
+if st.button("🔄 Reset"):
+    for cell in st.session_state.grid:
+        st.session_state.grid[cell] = ""
+    st.experimental_rerun()
+    
