@@ -1,37 +1,73 @@
-import json
 import streamlit as st
+import json
 
-st.set_page_config(page_title="Cruciverba Latino", page_icon="✒️", layout="centered")
+st.set_page_config(page_title="Cruciverba Latino", layout="wide")
+st.title("🧩 Cruciverba di Locuzioni Latine")
 
-st.title("📘 Cruciverba di Locuzioni Latine")
-st.write("Scegli una definizione e prova a indovinare la parola latina corretta!")
+# Load words
+with open("words.json", "r", encoding="utf-8") as f:
+    words_list = json.load(f)["words"]
 
-# --- Load words.json ---
-try:
-    with open("words.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-        words_list = data.get("words", [])
-except Exception as e:
-    st.error("❌ Errore nel caricamento di words.json:")
-    st.code(str(e))
-    st.stop()
+# Determine grid size
+max_row = max(word["row"] + (len(word["word"]) if word["direction"] == "V" else 1) for word in words_list)
+max_col = max(word["col"] + (len(word["word"]) if word["direction"] == "H" else 1) for word in words_list)
 
-if not words_list:
-    st.error("❌ words.json è vuoto o formattato male.")
-    st.stop()
+# Initialize grid state
+if "grid" not in st.session_state:
+    st.session_state.grid = [["" for _ in range(max_col)] for _ in range(max_row)]
 
-# List clues
-clues = {item["clue"]: item["word"] for item in words_list}
+# Fill grid numbers for clues
+numbering = {}
+for idx, word in enumerate(words_list, 1):
+    r, c = word["row"], word["col"]
+    if (r, c) not in numbering:
+        numbering[(r, c)] = str(idx)
+    word["number"] = str(idx)
 
-selected_clue = st.selectbox("📌 Scegli una definizione:", list(clues.keys()))
+# Sidebar clues
+st.sidebar.header("📜 Definizioni")
+st.sidebar.subheader("Orizzontali")
+for w in words_list:
+    if w["direction"] == "H":
+        st.sidebar.write(f"{w['number']} → {w['clue']}")
+st.sidebar.subheader("Verticali")
+for w in words_list:
+    if w["direction"] == "V":
+        st.sidebar.write(f"{w['number']} → {w['clue']}")
 
-user_answer = st.text_input("✏️ La tua risposta (solo lettere, senza spazi):")
+# Draw grid
+st.header("🧩 Griglia")
+for r in range(max_row):
+    cols = st.columns(max_col)
+    for c in range(max_col):
+        key = f"{r}_{c}"
+        val = st.session_state.grid[r][c]
+        display = val if val else ""
+        # Show number if this is start of a word
+        num_label = numbering.get((r, c), "")
+        if num_label:
+            display = num_label
+        st.session_state.grid[r][c] = cols[c].text_input("", value=val, max_chars=1, key=key)
 
-if st.button("Verifica"):
-    correct_answer = clues[selected_clue].upper().replace(" ", "")
-    user_clean = user_answer.upper().replace(" ", "")
-
-    if user_clean == correct_answer:
-        st.success("✅ Corretto!")
+# Check button
+if st.button("✔️ Controlla"):
+    correct = True
+    for w in words_list:
+        r, c = w["row"], w["col"]
+        for i, letter in enumerate(w["word"].upper()):
+            rr, cc = (r + i, c) if w["direction"] == "V" else (r, c + i)
+            user_letter = st.session_state.grid[rr][cc].upper()
+            if user_letter != letter:
+                correct = False
+                break
+    if correct:
+        st.success("🎉 Complimenti! Tutte le parole sono corrette.")
     else:
-        st.error(f"❌ Errato! La risposta corretta era **{correct_answer}**.")
+        st.error("❌ Alcune lettere sono sbagliate. Riprova!")
+
+# Reset
+if st.button("🔄 Reset"):
+    for r in range(max_row):
+        for c in range(max_col):
+            st.session_state.grid[r][c] = ""
+    st.experimental_rerun()
